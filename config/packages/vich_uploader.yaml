@@ -1,0 +1,12 @@
+vich_uploader:
+    db_driver: orm
+
+    #PHP 8 ONLY 
+    metadata:
+        type: attribute
+
+    mappings:
+        montres:
+            uri_prefix: /images/montres
+            upload_destination: '%kernel.project_dir%/public/images/montres'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer

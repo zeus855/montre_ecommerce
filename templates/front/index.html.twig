@@ -1,0 +1,56 @@
+{% extends "base.html.twig" %}
+
+{#
+    La fonction parent() permet de récupérer le contenu du block situé dans le fichier héritée (base.html.twig)
+#}
+{% block title %}{{ parent() }} | Page principale{% endblock %}
+
+{% block h1 %}Bienvenue chez GYGY STORE{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        p{
+            color:blue!important;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    {# {{ dump(prenomTwig) }} #}
+
+    {# <h2 class="text-center">Bonjour {{ prenomTwig }}</h2> #}
+
+    <h2 class="text-center">Bonjour 
+        {% if app.user %}
+            {{ app.user.prenom }}
+        {% endif %}
+    </h2>
+
+    <img 
+        src="{{ asset('images/img.png') }}" 
+        alt=""
+        title=""
+        class="imgHome"
+    >
+
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt minima dolores veniam deleniti nulla beatae delectus! Voluptatem quos placeat dolor nulla et? Impedit aut aliquid eligendi velit. Ea excepturi nesciunt incidunt voluptates dolorem sunt quos veniam nam eaque rem laborum quas, placeat quisquam cumque amet debitis repellendus fugit porro sapiente!</p>
+
+
+    {#
+        En twig, il existe une variable d'environnement qui s'appelle app
+        dans ce tableau, on y trouve 'user'
+
+        quand l'utilisateur n'est pas connectée : app.user est NULL
+        quand l'utilisateur est connecté : app.user est un objet issu de l'entity User
+    #}
+
+    {{ dump(app.user) }}
+
+{% endblock %}
+
+{% block javascripts %}
+
+    
+
+{% endblock %}
