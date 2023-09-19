@@ -12,7 +12,7 @@
                 <th>Titre</th>
                 <th>Description</th>
                 <th>Prix</th>
-                <th>Image_name</th>
+                <th>Nom de l'image</th>
                 <th>CreatedAt</th>
                 <th></th>
             </tr>
@@ -28,8 +28,12 @@
                 <td>{{ montre.createdAt ? montre.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td><img src="{{ asset('images/montres/' ~ montre.imageName) }}" alt=""</td>
                 <td>
-                    <a href="{{ path('app_montre_show', {'id': montre.id}) }}">show</a>
-                    <a href="{{ path('app_montre_edit', {'id': montre.id}) }}">edit</a>
+                    <a class="btn btn-primary text-white" href="{{ path('app_montre_show', {'id': montre.id}) }}">Fiche</a>
+                    <a class="btn btn-warning text-white" href="{{ path('app_montre_edit', {'id': montre.id}) }}">Modifier</a>
+                    
+                    {{ include('montre/_delete_form.html.twig') }}
+                    
+                    
                 </td>
             </tr>
         {% else %}
@@ -40,5 +44,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_montre_new') }}">Create new</a>
+    <a class="btn btn-primary" href="{{ path('app_montre_new') }}">Ajouter une montre</a>
 {% endblock %}

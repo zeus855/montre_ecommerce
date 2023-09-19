@@ -127,7 +127,7 @@ class Montre
         return $this->image_name;
     }
 
-    public function setImageName(string $image_name): static
+    public function setImageName(?string $image_name): static
     {
         $this->image_name = $image_name;
 

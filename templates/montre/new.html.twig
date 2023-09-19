@@ -1,11 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Montre{% endblock %}
+{% block title %}Nouvelle Montre{% endblock %}
 
 {% block body %}
-    <h1>Create new Montre</h1>
+    <h1>Ajouter</h1>
+    <a class="btn btn-primary" href="{{ path('app_montre_index') }}">Retour</a>
 
     {{ include('montre/_form.html.twig') }}
 
-    <a href="{{ path('app_montre_index') }}">back to list</a>
+    
 {% endblock %}

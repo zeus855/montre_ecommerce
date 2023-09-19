@@ -7,15 +7,17 @@
 
 {% block h1 %}Bienvenue chez GYGY STORE{% endblock %}
 
+
 {% block stylesheets %}
-    <style>
+    {# /* <style>
         p{
             color:blue!important;
         }
-    </style>
+    </style> */ #}
 {% endblock %}
 
 {% block body %}
+
 
     {# {{ dump(prenomTwig) }} #}
 
@@ -34,7 +36,9 @@
         class="imgHome"
     >
 
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt minima dolores veniam deleniti nulla beatae delectus! Voluptatem quos placeat dolor nulla et? Impedit aut aliquid eligendi velit. Ea excepturi nesciunt incidunt voluptates dolorem sunt quos veniam nam eaque rem laborum quas, placeat quisquam cumque amet debitis repellendus fugit porro sapiente!</p>
+    
+
+    <h2 class="text-center">Bienvenue chez GYGY STORE site dedié à la vente en ligne de montres Femme et Homme</h2>
 
 
     {#
@@ -45,7 +49,7 @@
         quand l'utilisateur est connecté : app.user est un objet issu de l'entity User
     #}
 
-    {{ dump(app.user) }}
+    
 
 {% endblock %}
 
