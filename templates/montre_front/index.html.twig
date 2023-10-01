@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Montre{% endblock %}
+{% block title %}{{montre.titre}}{% endblock %}
 
 {% block body %}
-    <h1>Montre</h1>
+    <h1>{{montre.titre}}</h1>
 
-    <a class="btn btn-primary" href="{{ path('app_montre_index') }}">Retour</a>
+    
 
     <table class="table">
         <tbody>
@@ -38,9 +38,4 @@
         </tbody>
     </table>
 
-    
-
-    <a class="btn btn-secondary m-2" href="{{ path('app_montre_edit', {'id': montre.id}) }}">Modifier</a>
-
-    {{ include('montre/_delete_form.html.twig') }}
 {% endblock %}

@@ -40,8 +40,9 @@ class Montre
 
     //On rajoute un constructeur
     public function __construct() {
-        // $this->createdAt = new \DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable();
         $this->images = new ArrayCollection();
+        $this->montreCommandes = new ArrayCollection();
         
     }
     
@@ -51,6 +52,9 @@ class Montre
 
     #[ORM\OneToMany(mappedBy: 'montre', targetEntity: Image::class, orphanRemoval: true, cascade:['persist', 'remove'])]
     private Collection $images;
+
+    #[ORM\OneToMany(mappedBy: 'montre', targetEntity: MontreCommande::class, orphanRemoval: true)]
+    private Collection $montreCommandes;
 
     public function getId(): ?int
     {
@@ -182,6 +186,36 @@ class Montre
             // set the owning side to null (unless already changed)
             if ($image->getMontre() === $this) {
                 $image->setMontre(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MontreCommande>
+     */
+    public function getMontreCommandes(): Collection
+    {
+        return $this->montreCommandes;
+    }
+
+    public function addMontreCommande(MontreCommande $montreCommande): static
+    {
+        if (!$this->montreCommandes->contains($montreCommande)) {
+            $this->montreCommandes->add($montreCommande);
+            $montreCommande->setMontre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMontreCommande(MontreCommande $montreCommande): static
+    {
+        if ($this->montreCommandes->removeElement($montreCommande)) {
+            // set the owning side to null (unless already changed)
+            if ($montreCommande->getMontre() === $this) {
+                $montreCommande->setMontre(null);
             }
         }
 

@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panier!{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+	<div class="row mt-5">
+    	<div class="col-12">
+        	<table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Montre</th>
+                  <th>Quantité</th>
+                  <th>Prix</th>
+                </tr>
+              </thead>
+              <tbody>
+              	{% for panier in paniers %}
+                    <tr>
+                      <td>{{ panier.titre }}</td>
+                      <td><input type="integer" value="{{ quantites[panier.id] }}"></td>
+                       <td>{{ quantites[panier.id] * panier.prix }} €</td>
+                    </tr>
+                {% else %}
+                <tr>
+                <td>Votre panier est vide</td>
+                </tr>
+                {% endfor %}
+                
+              </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="mt-3">
+      <button class="btn btn-primary">
+         Procéder au paiement
+      </button>
+    </div>
+</div>
+
+{% endblock %}

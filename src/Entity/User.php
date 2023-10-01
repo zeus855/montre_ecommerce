@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -38,9 +40,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Commande::class, orphanRemoval: true)]
+    private Collection $commandes;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: MontreCommande::class, orphanRemoval: true)]
+    private Collection $montreCommandes;
+
     //On rajoute un constructeur
     public function __construct() {
         $this->createdAt = new \DateTimeImmutable();
+        $this->commandes = new ArrayCollection();
+        $this->montreCommandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -164,6 +174,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Commande>
+     */
+    public function getCommandes(): Collection
+    {
+        return $this->commandes;
+    }
+
+    public function addCommande(Commande $commande): static
+    {
+        if (!$this->commandes->contains($commande)) {
+            $this->commandes->add($commande);
+            $commande->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommande(Commande $commande): static
+    {
+        if ($this->commandes->removeElement($commande)) {
+            // set the owning side to null (unless already changed)
+            if ($commande->getUser() === $this) {
+                $commande->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MontreCommande>
+     */
+    public function getMontreCommandes(): Collection
+    {
+        return $this->montreCommandes;
+    }
+
+    public function addMontreCommande(MontreCommande $montreCommande): static
+    {
+        if (!$this->montreCommandes->contains($montreCommande)) {
+            $this->montreCommandes->add($montreCommande);
+            $montreCommande->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMontreCommande(MontreCommande $montreCommande): static
+    {
+        if ($this->montreCommandes->removeElement($montreCommande)) {
+            // set the owning side to null (unless already changed)
+            if ($montreCommande->getUser() === $this) {
+                $montreCommande->setUser(null);
+            }
+        }
 
         return $this;
     }

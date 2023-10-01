@@ -23,7 +23,7 @@
                 <td>{{ montre.id }}</td>
                 <td>{{ montre.titre }}</td>
                 <td>{{ montre.description }}</td>
-                <td>{{ montre.prix }}</td>
+                <td>{{ montre.prix }} € </td>
                 <td>{{ montre.imageName }}</td>                
                 <td>{{ montre.createdAt ? montre.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td><img src="{{ asset('images/montres/' ~ montre.imageName) }}" alt=""</td>

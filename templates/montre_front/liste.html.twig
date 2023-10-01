@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}liste des montres{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5">
+  <div class="row mt-3">
+    {% for montre in montres %}
+        <div class="col-12 col-sm-4">
+        	<a href="{{ path ('app_montre_front',{id: montre.id})}}">
+
+            <div class="card" style="width: 18rem;">
+              <img src="{{ asset('images/montres/' ~ montre.imageName) }}" class="card-img-top" alt="...">
+              <div class="card-body">
+              <p class="my-2 text-dark">{{montre.titre}}</p>
+                <p class="card-text">{{ montre.description }} </p>
+                <div class="mt-2">
+                	<span class="badge rounded-pill text-bg-primary">{{ montre.prix }} € </span>
+                </div>
+              </div>
+            </div>
+
+            </a>
+        </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
