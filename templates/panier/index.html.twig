@@ -17,10 +17,25 @@
                 </tr>
               </thead>
               <tbody>
+              {% set total_quantite=0 %}
+              {% set total=0 %}
+
               	{% for panier in paniers %}
                     <tr>
                       <td>{{ panier.titre }}</td>
-                      <td><input type="integer" value="{{ quantites[panier.id] }}"></td>
+                      {% set total_quantite=total_quantite+ quantites[panier.id] %}
+                      {% set total=total+(quantites[panier.id] * panier.prix) %}
+
+
+                      <td>
+                      <div class="input-group">
+                      <input type="number" min="1" value="{{ quantites[panier.id] }}" class="form-control js-quantity" data-montre="{{panier.id}}" aria-label="Euros amount (with dot and two decimal places)">
+                      <span class="input-group-text">€</span>
+                      </div>
+                      </td>
+
+
+                      {# <td><input type="integer" value="{{ quantites[panier.id] }}"></td> #}
                        <td>{{ quantites[panier.id] * panier.prix }} €</td>
                     </tr>
                 {% else %}
@@ -28,15 +43,20 @@
                 <td>Votre panier est vide</td>
                 </tr>
                 {% endfor %}
-                
+                {% if paniers %}
+                  <tr class="table-success">
+                  <td></td>
+                  <td>{{total_quantite}}</td>
+                  <td>{{total}} € </td>
+                  </tr>
+                {% endif %}
               </tbody>
             </table>
         </div>
     </div>
     <div class="mt-3">
-      <button class="btn btn-primary">
-         Procéder au paiement
-      </button>
+    <a class="btn btn-primary" href="">Valider le panier</a>
+      
     </div>
 </div>
 

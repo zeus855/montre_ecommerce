@@ -5,7 +5,7 @@
 {% block body %}
     <h1>{{montre.titre}}</h1>
 
-    
+    <a class="btn btn-primary" href="{{ path('front') }}">Retour</a>
 
     <table class="table">
         <tbody>
@@ -29,12 +29,16 @@
                 <th>Image_name</th>
                 <td>{{ montre.imageName }}</td>
                 <td><img src="{{ asset('images/montres/' ~ montre.imageName) }}" alt=""</td>
+
+                
             </tr>
+
+            
             <tr>
                 <th>CreatedAt</th>
                 <td>{{ montre.createdAt ? montre.createdAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
-            <a class="btn btn-primary" href="{{ path('app_ajout_panier', {id:montre.id}) }}">Ajouter au panier</a>
+            <a class="btn btn-success" href="{{ path('app_ajout_panier', {id:montre.id}) }}">Ajouter au panier</a>
         </tbody>
     </table>
 

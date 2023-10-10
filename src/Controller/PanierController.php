@@ -3,13 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Montre;
-use App\Repository\MontreCommandeRepository;
 use App\Repository\MontreRepository;
+use App\Repository\MontreCommandeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PanierController extends AbstractController
 {
@@ -17,6 +18,23 @@ class PanierController extends AbstractController
     public function index(Request $request, MontreRepository $montreRepository): Response
     {
         $montresId = $request->getSession()->get('panier');
+        
+        $paniers = $montreRepository->findBy(['id' => array_keys($montresId)]);
+        return $this->render('panier/index.html.twig', [
+            'paniers' => $paniers,
+            'quantites' => $montresId
+
+        ]);
+    }
+
+// on a rajouter pour la validation panier
+    #[Route('/panier/validation', name: 'app_panier_validation')]
+    #[IsGranted('ROLE_USER')]
+    public function validation(Request $request, MontreRepository $montreRepository): Response
+    {
+        $user= $this->getUser();
+        $montresId = $request->getSession()->get('panier');
+        
         $paniers = $montreRepository->findBy(['id' => array_keys($montresId)]);
         return $this->render('panier/index.html.twig', [
             'paniers' => $paniers,
@@ -49,7 +67,31 @@ class PanierController extends AbstractController
         }
 
         $session->set('panier', $panier);
-        $this->addFlash('success', 'Element à bien été rajouté dans le panier');
+        $this->addFlash('success', 'Le produit à bien été rajouté dans le panier');
         return $this->redirectToRoute('app_montre_show', ['id' => $montre->getId()]);
     }
+
+    // permet d'afficher les elements de paniers
+    #[Route('/update/{id}/element/{valeur}', name: 'app_update_panier')]
+    public function update(Montre $montre,int $valeur, Request $request): Response
+    {
+        $session = $request->getSession();
+
+        $panier = $session->get('panier');
+        $montreid = $montre->getId();
+        if ($panier[$montreid] ?? false) {
+            $panier[$montreid] = $valeur;
+         }
+         
+         $session->set('panier', $panier);
+         
+         $this->addFlash('success', 'Votre panier à été mis à jour');
+         
+         return $this->redirectToRoute('app_panier');
+         
+    }
+
+
+
+        
 }
