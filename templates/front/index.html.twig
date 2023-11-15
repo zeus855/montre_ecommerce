@@ -23,19 +23,19 @@
 
     {# <h2 class="text-center">Bonjour {{ prenomTwig }}</h2> #}
 
-    <h2 class="text-center">Bonjour 
+    <h2 class="text-center">Bonjour,
         {% if app.user %}
             {{ app.user.prenom }}
         {% endif %}
     </h2>
-
+    <a href="{{ path('front') }}">
     <img 
         src="{{ asset('images/img.png') }}" 
         alt=""
         title=""
         class="imgHome"
     >
-
+    </a>
     
 
     <h2 class="text-center">Bienvenue chez GYGY STORE site dedié à la vente en ligne de montres Femme et Homme</h2>

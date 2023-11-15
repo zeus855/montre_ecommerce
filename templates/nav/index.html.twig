@@ -1,0 +1,7 @@
+{% for categorie in categories %}
+
+<li class="nav-item">
+          <a class="nav-link text-white" href="{{ path('front_categorie',{id:categorie.id}) }}">{{categorie.nom}}</a>
+        </li>
+
+ {% endfor %}     

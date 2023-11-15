@@ -5,7 +5,7 @@
 {% block body %}
     <h1>Montre</h1>
 
-    <a class="btn btn-primary" href="{{ path('app_montre_index') }}">Retour</a>
+    <a class="btn btn-primary" href="{{ path('front') }}">Retour</a>
 
     <table class="table">
         <tbody>
@@ -34,7 +34,7 @@
                 <th>CreatedAt</th>
                 <td>{{ montre.createdAt ? montre.createdAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
-            <a class="btn btn-primary" href="{{ path('app_ajout_panier', {id:montre.id}) }}">Ajouter au panier</a>
+            {# <a class="btn btn-primary" href="{{ path('app_ajout_panier', {id:montre.id}) }}">Ajouter au panier</a> #}
         </tbody>
     </table>
 

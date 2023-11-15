@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Categorie;
 use App\Repository\MontreRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,11 +11,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FrontController extends AbstractController
 {
-    // #[Route('/', name: 'front')]
+    #[Route('/home', name: 'home')]
     public function index(Request $request): Response
     {
         // Commande qui permet de vider le panier
-        // $request->getSession()->set('panier', []);
+        // $request->getSession()->remove('panier');
         
         return $this->render('front/index.html.twig', [
             'controller_name' => 'FrontController',
@@ -25,6 +26,16 @@ class FrontController extends AbstractController
     public function liste(MontreRepository $montreRepository): Response
     {
         $montres = $montreRepository->findBy([]);
+        return $this->render('montre_front/liste.html.twig', [
+            'montres' => $montres,
+        ]);
+    }
+
+
+    #[Route('/{id}/categorie', name: 'front_categorie')]
+    public function categorie(MontreRepository $montreRepository, Categorie $categorie): Response
+    {
+        $montres = $montreRepository->findBy(['categorie' => $categorie]);
         return $this->render('montre_front/liste.html.twig', [
             'montres' => $montres,
         ]);
