@@ -11,10 +11,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/montre')]
+
+#[Route('/admin/montre')]
 class MontreController extends AbstractController
 {
     #[Route('/', name: 'app_montre_index', methods: ['GET'])]
+
     public function index(MontreRepository $montreRepository): Response
     {
         return $this->render('montre/index.html.twig', [
@@ -71,7 +73,7 @@ class MontreController extends AbstractController
     #[Route('/{id}', name: 'app_montre_delete', methods: ['POST'])]
     public function delete(Request $request, Montre $montre, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$montre->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $montre->getId(), $request->request->get('_token'))) {
             $entityManager->remove($montre);
             $entityManager->flush();
         }

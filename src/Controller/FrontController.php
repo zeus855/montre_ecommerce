@@ -16,16 +16,19 @@ class FrontController extends AbstractController
     {
         // Commande qui permet de vider le panier
         // $request->getSession()->remove('panier');
-        
+
         return $this->render('front/index.html.twig', [
             'controller_name' => 'FrontController',
         ]);
     }
 
     #[Route('/', name: 'front')]
-    public function liste(MontreRepository $montreRepository): Response
+    public function liste(Request $request, MontreRepository $montreRepository): Response
     {
-        $montres = $montreRepository->findBy([]);
+        $term = $request->query->get('search');
+
+        $montres = $montreRepository->searchByTerm($term);
+
         return $this->render('montre_front/liste.html.twig', [
             'montres' => $montres,
         ]);

@@ -1,39 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des montres{% endblock %}
+{% block title %}Liste des montres
+{% endblock %}
 
 {% block body %}
 
-<div class="container mt-5">
-  <div>
-     <h2 class="text-center">Liste des montres</h2>
-  </div>
+	<div class="container mt-5">
+		<div>
+			<h2 class="text-center">Liste des montres
+				{% if app.request.get('search') %}
+					<span class="badge rounded-pill text-bg-primary">{{ app.request.get('search') }}</span>
+				{% endif %}
+			</h2>
+		</div>
 
-  <div class="row mt-3">
-    {% for montre in montres %}
-        <div class="col-12 col-xxl-3 col-xl-4 col-lg-5 col-md-9 mt-5">
-        {# <div class="col-12 col-xl mt-5"> #}
-        	<a href="{{ path ('app_montre_front',{id: montre.id})}}" class="d-flex justify-content-center">
+		<div class="row mt-3">
+			{% for montre in montres %}
+				<div
+					class="col-12 col-xxl-3 col-xl-4 col-lg-5 col-md-9 mt-5">
+					{# <div class="col-12 col-xl mt-5"> #}
+					<a href="{{ path ('app_montre_front',{id: montre.id})}}" class="d-flex justify-content-center">
 
-            <div class="card" style="width: 18rem;">
-              <img src="{{ asset('images/montres/' ~ montre.imageName) }}" class="card-img-top" alt="...">                           
+						<div class="card" style="width: 18rem;">
+							<img src="{{ asset('images/montres/' ~ montre.imageName) }}" class="card-img-top" alt="...">
 
-              <div class="card-body">
-              <p class="my-2 text-dark text-center">{{montre.titre}}</p>
-                {# <p class="card-text">{{ montre.description }} </p> #}
-                <div class="mt-2 text-center">
-                	<span class="badge rounded-pill text-bg-primary">{{ montre.prix }} € </span>
-                </div>
-              </div>
-            </div>
-            </a>
+							<div class="card-body">
+								<p class="my-2 text-dark text-center">{{montre.titre}}</p>
+								{# <p class="card-text">{{ montre.description }} </p> #}
+								<div class="mt-2 text-center">
+									<span class="badge rounded-pill text-bg-primary">{{ montre.prix }}
+										€
+									</span>
+								</div>
+							</div>
+						</div>
+					</a>
 
-            <div class="text-center">
-            <a class="btn btn-primary my-2" href="{{ path('app_ajout_panier', {id:montre.id}) }}">Ajouter au panier</a>
-            </div>
-        </div>
-    {% endfor %}
-  </div>
-</div>
+					<div class="text-center">
+						<a class="btn btn-primary my-2" href="{{ path('app_ajout_panier', {id:montre.id}) }}">Ajouter au panier</a>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
 
 {% endblock %}

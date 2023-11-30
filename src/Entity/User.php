@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Constante\AdresseTypeConstante;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -49,8 +50,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Adresse::class, orphanRemoval: true)]
     private Collection $adresses;
 
+    /**
+     * @return Adresse[]
+     */
+    public function getAdresseByType(string $type): array
+    {
+        $adresses = [];
+
+        /** @var Adresse $adresse */
+        foreach ($this->adresses as $adresse) {
+            if ($adresse->getLabel() === $type) {
+                $adresses[] = $adresse;
+            }
+        }
+
+        return $adresses;
+    }
+
     //On rajoute un constructeur
-    public function __construct() {
+    public function __construct()
+    {
         $this->createdAt = new \DateTimeImmutable();
         $this->commandes = new ArrayCollection();
         $this->montreCommandes = new ArrayCollection();

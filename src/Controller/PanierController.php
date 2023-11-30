@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Constante\AdresseTypeConstante;
 use App\Entity\Adresse;
 use App\Entity\Montre;
 use App\Form\AdresseType;
@@ -14,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PanierController extends AbstractController
 {
@@ -22,13 +24,126 @@ class PanierController extends AbstractController
     {
         $montresId = $request->getSession()->get('panier');
 
-        $paniers = $montreRepository->findBy(['id' => array_keys($montresId)]);
+        if ($montresId) {
+            $paniers = $montreRepository->findBy(['id' => array_keys($montresId)]);
+        } else {
+            $paniers = [];
+        }
+
+
         return $this->render('panier/index.html.twig', [
             'paniers' => $paniers,
             'quantites' => $montresId
 
         ]);
     }
+
+    #[Route('/paiement/success', name: 'app_paiement_success_panier')]
+    public function paiementSuccess(Request $request): Response
+    {
+
+        $request->getSession()->remove('panier');
+        $request->getSession()->remove('adresse');
+
+        $this->addFlash('success', 'Félicitation votre paiement à bien été accepté');
+
+        return $this->redirectToRoute('front');
+    }
+
+    #[Route('/paiement/failed', name: 'app_paiement_failed_panier')]
+    public function paiementFailed(Request $request): Response
+    {
+
+        $this->addFlash('danger', 'Un problème est survenue lors de votre paiement, merci de reessayer plus tard');
+
+        return $this->redirectToRoute('front');
+    }
+
+
+    #[Route('/panier/adresses', name: 'app_panier_adresse')]
+    #[IsGranted('ROLE_USER')]
+    public function adresses(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $adresses = $entityManager->getRepository(Adresse::class)->findBy(['user' => $this->getUser()]);
+
+        $livraisons = [];
+        $facturations = [];
+
+        foreach ($adresses as $adresse) {
+            if ($adresse->getLabel() === AdresseTypeConstante::LIVRAISON) {
+                $livraisons[] = $adresse;
+            } elseif ($adresse->getLabel() === AdresseTypeConstante::FACTURATION) {
+                $facturations[] = $adresse;
+            }
+        }
+
+        return $this->render('panier/adresses.html.twig', [
+            'adresses' => [
+                'livraisons' => $livraisons,
+                'facturations' => $facturations
+            ]
+        ]);
+    }
+
+    // La route pour supprimer une adresse
+    #[Route('/panier/adresses/{id}', name: 'app_edit_adresse')]
+    #[IsGranted('ROLE_USER')]
+    public function editAdresse(Request $request, Adresse $adresse, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(AdresseType::class, $adresse);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $adresse->setUser($this->getUser());
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Votre adresse à bien été modifié');
+
+            if ($request->query->get('urlRedirect')) {
+                return $this->redirect($request->query->get('urlRedirect'));
+            }
+
+            return $this->redirectToRoute('app_panier_adresse');
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $this->render('panier/validate.html.twig', [
+            'form' => $form->createView(),
+            'adresses' => $user->getAdresses()
+        ]);
+    }
+
+    // La route pour supprimer une adresse
+    #[Route('/panier/delete_adresses/{id}', name: 'app_delete_adresse')]
+    #[IsGranted('ROLE_USER')]
+    public function deleteAdresse(Adresse $adresse, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $session = $request->getSession();
+
+        $panier = $session->get('panier');
+        $adresseid = $adresse->getId();
+        if ($panier[$adresseid] ?? false) {
+
+            unset($panier[$adresseid]);
+        }
+
+        $session->set('panier', $panier);
+        $entityManager->remove($adresse);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Votre adresse à été suprimée');
+
+        if ($request->query->get('urlRedirect')) {
+            return $this->redirect($request->query->get('urlRedirect'));
+        }
+
+        return $this->redirectToRoute('app_panier_adresse');
+    }
+
 
     // on a rajouter pour la validation panier
     #[Route('/panier/validation', name: 'app_panier_validation')]
@@ -41,28 +156,114 @@ class PanierController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-          
-          $adresse->setUser($this->getUser());
-          
-          $entityManager->persist($adresse);
-          $entityManager->flush();
-          
-          $this->addFlash('success', 'Votre adresse à bien été rajoutée');
-          
-          return $this->redirectToRoute('app_panier_validation');
-         
-        
+
+            $adresse->setUser($this->getUser());
+
+            $entityManager->persist($adresse);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Votre adresse à bien été rajoutée');
+
+            if ($request->query->get('urlRedirect')) {
+                return $this->redirect($request->query->get('urlRedirect'));
+            }
+
+            return $this->redirectToRoute('app_panier_adresse');
         }
 
         /** @var User $user */
         $user = $this->getUser();
 
         return $this->render('panier/validate.html.twig', [
-        	'form' => $form->createView(),
+            'form' => $form->createView(),
             'adresses' => $user->getAdresses()
         ]);
     }
 
+
+    #[Route('/selection/adresse', name: 'app_selection_panier')]
+    public function selectionAdresse(Request $request): Response
+    {
+        $result = $request->query->get('result', []);
+
+
+        $session = $request->getSession();
+
+        $adresse = $session->get('adresse');
+        $ads = [];
+        if (!$adresse) {
+
+            $ads = [
+                'livraison' => null,
+                'facturation' => null,
+            ];
+
+            foreach ($result as $type => $adresseId) {
+                if ($type === 'livraison') {
+                    $ads['livraison'] = $adresseId;
+                }
+                if ($type === 'facturation') {
+                    $ads['facturation'] = $adresseId;
+                }
+            }
+        } else {
+            foreach ($result as $type => $adresseId) {
+                if ($type === 'livraison') {
+                    $ads['livraison'] = $adresseId;
+                }
+                if ($type === 'facturation') {
+                    $ads['facturation'] = $adresseId;
+                }
+            }
+        }
+
+        $session->set('adresse', $ads);
+
+        return $this->json(['url' => $this->generateUrl('app_paiement_panier')], 200);
+    }
+
+    #[Route('/paiement/info', name: 'app_paiement_panier')]
+    #[IsGranted('ROLE_USER')]
+    public function paiement(Request $request, MontreRepository $montreRepository): Response
+    {
+        $user = $this->getUser();
+
+        \Stripe\Stripe::setApiKey($this->getParameter('app.stripe.secret_key'));
+
+        $panier = $request->getSession()->get('panier');
+
+        $montres = $montreRepository->findBy(['id' => array_keys($panier)]);
+
+        $prices = [];
+        foreach ($montres as $montre) {
+            $prices[] = [
+                'price_data' => [
+                    'currency' => 'eur',
+                    'unit_amount' => ($montre->getPrix() * 100),
+                    'product_data' => [
+                        'name' => $montre->getTitre(),
+                    ],
+                ],
+                'quantity' => $panier[$montre->getId()]
+            ];
+        }
+
+        $checkoutSession = \Stripe\Checkout\Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => $prices,
+            'mode' => 'payment',
+            'customer_email' => $user->getEmail(),
+            'success_url' => $this->generateUrl('app_paiement_success_panier', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            'cancel_url' => $this->generateUrl('app_paiement_failed_panier', [], UrlGeneratorInterface::ABSOLUTE_URL)
+        ]);
+
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Location', $checkoutSession->url);
+        $response->setStatusCode(303);
+
+        return $response;
+    }
 
 
     #[Route('/Ajout/{id}', name: 'app_ajout_panier')]
@@ -90,7 +291,8 @@ class PanierController extends AbstractController
 
         $session->set('panier', $panier);
         $this->addFlash('success', 'Le produit à bien été rajouté dans le panier');
-        return $this->redirectToRoute('app_montre_show', ['id' => $montre->getId()]);
+        // return $this->redirectToRoute('app_montre_show', ['id' => $montre->getId()]);
+        return $this->redirectToRoute('app_panier');
     }
 
     // permet de supprimer une montre dans le panier

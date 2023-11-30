@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Constante\AdresseTypeConstante;
 use App\Repository\AdresseRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,11 +27,29 @@ class Adresse
     private ?string $pays = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $label = null;
+    private ?string $label = AdresseTypeConstante::LIVRAISON;
 
     #[ORM\ManyToOne(inversedBy: 'adresses')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $telephone = null;
+
+    // Concatenation des proprietes adresse
+    // PHP_EOL annonce un retour à la ligne
+    public function fullAdresse(): string
+    {
+        // 3 Rue chemin de gaule, 75012 Paris
+        return sprintf(
+            '%s, %s %s %s %s',
+            $this->rue,
+            $this->codePostal,
+            $this->ville,
+            PHP_EOL,
+            $this->telephone
+        );
+    }
 
     public function getId(): ?int
     {
@@ -105,6 +124,18 @@ class Adresse
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): static
+    {
+        $this->telephone = $telephone;
 
         return $this;
     }

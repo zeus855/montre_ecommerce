@@ -28,7 +28,7 @@
             <tr>
                 <th>Image_name</th>
                 <td>{{ montre.imageName }}</td>
-                <td><img src="{{ asset('images/montres/' ~ montre.imageName) }}" alt=""</td>
+                <td><img src="{{ asset('images/montres/' ~ montre.imageName) | imagine_filter('miniature') }}" alt=""</td>
             </tr>
             <tr>
                 <th>CreatedAt</th>
