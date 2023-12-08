@@ -50,7 +50,6 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
 
         // For example:
         return new RedirectResponse($this->urlGenerator->generate('front'));
-      
     }
 
     protected function getLoginUrl(Request $request): string
