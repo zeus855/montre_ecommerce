@@ -23,10 +23,13 @@ class MontreRepository extends ServiceEntityRepository
 
     public function searchByTerm(?string $term): array
     {
+        //  On crée un objet QueryBuilder associé à l'entité Montre 'm' qui represente l'entité Montre
         $qb = $this->createQueryBuilder('m');
 
+        // On vérifie si le terme de recherche est fourni.
         if ($term) {
             $qb->where('m.titre LIKE :term')
+            // On utilise setParameter pour lier le paramètre :term à la valeur %{$term}% 
                 ->setParameter('term', "%" . $term . "%");
         }
 

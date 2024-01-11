@@ -9,22 +9,20 @@ use Doctrine\ORM\Mapping as ORM;
 class MontreCommande
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\ManyToOne(inversedBy: 'montreCommandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Montre $montre = null;
+
+    #[ORM\Id]
+    #[ORM\ManyToOne(inversedBy: 'montreCommandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Commande $commande = null;
 
     #[ORM\Column]
     private ?int $quantite = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\ManyToOne(inversedBy: 'montreCommandes')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Montre $montre = null;
-
-    #[ORM\ManyToOne(inversedBy: 'montreCommandes')]
-    private ?Commande $commande = null;
 
     #[ORM\Column]
     // On rajoute le statut
@@ -38,8 +36,7 @@ class MontreCommande
     //On rajoute un constructeur
     public function __construct()
     {
-        $this->createdAt = new \DateTimeImmutable();        
-        
+        $this->createdAt = new \DateTimeImmutable();
     }
 
 
@@ -66,7 +63,7 @@ class MontreCommande
     }
 
     // FONCTION QUI NE SERVIRA PAS CAR ON NE FERRA PAS DE MODIF 
-    
+
     // public function setCreatedAt(\DateTimeImmutable $createdAt): static
     // {
     //     $this->createdAt = $createdAt;

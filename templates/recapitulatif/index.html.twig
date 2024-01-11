@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Félicitation commande crée
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5 text-center">
+		<div class="jumbotron">
+			<h1 class="text-success">Paiement Réussi !</h1>
+			<p>Merci d'avoir effectué votre paiement avec succès.</p>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Détails de la Commande</h3>
+			</div>
+			<div class="panel-body">
+				<p>
+					<strong>Numéro de Commande :</strong>
+					#{{commande.id}}</p>
+				<p>
+					<strong>Montant Payé :</strong>
+					{{commande.total}} €</p>
+				<p>
+					<strong>Date de Paiement :</strong>
+					{{commande.createdAt|date('d/m/Y')}} </p>
+				
+			</div>
+		</div>
+
+		<a href="{{path('front')}}" class="btn btn-primary">< Retour à l'Accueil</a>
+	</div>
+{% endblock %}

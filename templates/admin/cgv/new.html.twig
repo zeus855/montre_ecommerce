@@ -1,0 +1,14 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Créer CGV{% endblock %}
+
+{% block body %}
+
+    <div class="container mt-5">
+        <h1>Nouveau CGV</h1>
+
+        {{ include('admin/cgv/_form.html.twig') }}
+
+        <a href="{{ path('app_admin_cgv_index') }}" class="btn btn-secondary">Retour</a>
+    </div>
+{% endblock %}

@@ -28,10 +28,19 @@
 
 				<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-				<button class="btn btn-lg btn-success" type="submit">
-					Connexion
-				</button>
-				<a href="{{path('app_register')}}">Création de compte</a>
+				<div class="d-flex justify-content-between">
+					<div class="mt-1">
+						<button class="btn btn-sm btn-success" type="submit">
+							Connexion
+						</button>
+					</div>
+					<div class="mx-2 mt-1">
+						<a href="{{path('app_forgot_password_request')}}" class="btn btn-info btn-sm">Mot de passe oublié</a>
+					</div>
+					<div class="mt-1">
+						<a class="btn btn-primary btn-sm" href="{{path('app_register')}}">Création de compte</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</form>

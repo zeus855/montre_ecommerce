@@ -50,6 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Adresse::class, orphanRemoval: true)]
     private Collection $adresses;
 
+    // Pour avoir l'auto completion
     /**
      * @return Adresse[]
      */

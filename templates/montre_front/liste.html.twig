@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des montres
+{% block title %}Liste des Montres
 {% endblock %}
 
 {% block body %}
 
 	<div class="container mt-5">
 		<div>
-			<h2 class="text-center">Liste des montres
+			<h2 class="text-center">Liste des Montres
 				{% if app.request.get('search') %}
 					<span class="badge rounded-pill text-bg-primary">{{ app.request.get('search') }}</span>
 				{% endif %}
@@ -19,7 +19,7 @@
 				<div
 					class="col-12 col-xxl-3 col-xl-4 col-lg-5 col-md-9 mt-5">
 					{# <div class="col-12 col-xl mt-5"> #}
-					<a href="{{ path ('app_montre_front',{id: montre.id})}}" class="d-flex justify-content-center">
+					<a href="{{ path ('app_montre_front',{slug: montre.slug})}}" class="d-flex justify-content-center">
 
 						<div class="card" style="width: 18rem;">
 							<img src="{{ asset('images/montres/' ~ montre.imageName) }}" class="card-img-top" alt="...">
@@ -37,9 +37,10 @@
 					</a>
 
 					<div class="text-center">
-						<a class="btn btn-primary my-2" href="{{ path('app_ajout_panier', {id:montre.id}) }}">Ajouter au panier</a>
+						<a class="btn btn-primary my-2" href="{{ path('app_ajout_panier', {slug: montre.slug}) }}">Ajouter au panier</a>
 					</div>
 				</div>
+				
 			{% endfor %}
 		</div>
 	</div>

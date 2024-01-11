@@ -1,0 +1,10 @@
+front:
+  profile:
+    commande:
+      list: 
+        state: 
+          pending: 'En cours'
+          paid: 'Payé'
+          cancel: 'Annulé'
+
+admin:

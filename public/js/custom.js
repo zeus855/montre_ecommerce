@@ -1,7 +1,9 @@
 $(function () {
   $(".js-quantity").on("click", function (e) {
     e.preventDefault();
+    //Recuperation de la quantité
     let quantity = $(this).data("value");
+    // Recuperation de l'id de montre
     let montreId = $(this).data("montre");
 
     if (quantity) {
@@ -15,6 +17,7 @@ $(function () {
     let montreId = $(this).data("montre");
 
     if (quantity) {
+      // Permet la redirection 
       window.location.href = `update-moins/${montreId}/element/${quantity}`;
     }
   });
@@ -53,21 +56,30 @@ $(function () {
   // });
 
   $(".js-paiment").on("click", function (e) {
-    result = [];
+    var res = [];
     $(".js-selected:checked").each(function (index, value) {
-      console.log(index, value);
       $id = $(value).data("id");
       $type = $(value).data("type");
       if ($.trim(value)) {
-        result[$type] = $id;
+        res[$type] = $id;
       }
     });
 
+    var urlParam =
+      "/selection/adresse?livraison=" +
+      res.livraison +
+      "&facturation=" +
+      res.facturation;
+
     $.ajax({
-      url: "/selection/adresse",
-      data: { result: result },
+      method: "GET",
+      url: urlParam,
       success: function (data) {
         window.location.href = data["url"];
+      },
+      error: function (xhr, status, erreur) {
+        // La fonction appelée en cas d'échec de la requête
+        console.error("Erreur Ajax: " + status + " - " + erreur);
       },
     });
   });

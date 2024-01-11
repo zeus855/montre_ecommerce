@@ -3,7 +3,37 @@
 {% block title %}{{montre.titre}}{% endblock %}
 
 {% block body %}
-    <h1>{{montre.titre}}</h1>
+
+    <div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <img  src="{{ asset('images/montres/' ~ montre.imageName) | imagine_filter('miniature') }}" alt="{{ montre.titre }}" class="img-responsive">
+        </div>
+        <div class="col-md-6">
+            <h2>{{montre.titre}}</h2>
+            <p class="text-muted">Prix : {{montre.prix}} €</p>
+            <p>{{ montre.description }}</p>
+
+            {# <div class="form-group">
+                <label for="quantity">Quantité :</label>
+                <input type="number" id="quantity" name="quantity" class="form-control" min="1" value="1">
+            </div> #}
+
+            <a href={{ path('app_ajout_panier', {slug: montre.slug}) }} class="btn btn-primary">Ajouter au Panier</a>
+        </div>
+    </div>
+
+    {# <h3>Caractéristiques de la Montre :</h3>
+    <ul>
+        <li>Boîtier en acier inoxydable</li>
+        <li>Bracelet en cuir véritable</li>
+        <li>Mouvement automatique suisse</li>
+        <li>Résistant à l'eau jusqu'à 50 mètres</li>
+    </ul> #}
+</div>
+
+
+    {# <h1>{{montre.titre}}</h1>
 
     <a class="btn btn-primary" href="{{ path('front') }}">Retour</a>
 
@@ -40,6 +70,6 @@
             </tr>
             <a class="btn btn-success" href="{{ path('app_ajout_panier', {id:montre.id}) }}">Ajouter au panier</a>
         </tbody>
-    </table>
+    </table> #}
 
 {% endblock %}

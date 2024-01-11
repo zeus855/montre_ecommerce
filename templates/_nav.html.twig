@@ -6,6 +6,8 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarText">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+			
+			{# Afin d'afficher les categories de façon dynamique dans le navigateur  #}
 				{{ render(controller(
         'App\\Controller\\NavController::index'
     )) }}
@@ -17,57 +19,82 @@
 					</a>
 				</li>
 
-				{% if app.user %}
-					<li class="nav-item">
-						<a class="nav-link text-white" href="{{ path('app_profil_show') }}">Mon compte</a>
-					</li>
-				{% endif %}
+				<li class="nav-item">
+					<a class="nav-link text-white" href="{{ path('app_cgv') }}">CGV
+
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link text-white" href="{{ path('app_contact') }}">Contact
+
+					</a>
+				</li>
 
 
 				{#Gestion du back  #}
 				{% if app.user %}
 					{% if is_granted('ROLE_ADMIN') %}
+						<li class="nav-item">
+							<a class="nav-link text-white" href="{{ path('app_montre_index') }}">Gestion ADMIN
 
-						<div class="dropdown">
-							<a class="btn btn-secondary dropdown-toggle bg-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								Gestion Administration
 							</a>
-							<ul class="dropdown-menu dropdown-menu-dark">
-								<li>
-									<a class="dropdown-item" href="{{ path('app_montre_index')}}">Gestion des montres</a>
-								</li>
-								<li>
-									<a class="dropdown-item" href="{{ path('app_categorie_index')}}">Gestion des catégories</a>
-								</li>
-								<li>
-									<a class="dropdown-item" href="#">Gestion des utilisateurs</a>
-								</li>
-							</ul>
-						</div>
-					{% endif %}
-				{% endif %}
+						</li>
+						{# <div class="dropdown">
+													<a class="btn btn-secondary dropdown-toggle bg-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+														Gestion Administration
+													</a>
+													<ul class="dropdown-menu dropdown-menu-dark">
+														<li>
+															<a class="dropdown-item" href="{{ path('app_admin_home_page_index') }}">Accès Back Office</a>
+														</li> #}
+
+						{# <li>
+															<a class="dropdown-item" href="{{ path('app_montre_index')}}">Gestion des montres</a>
+														</li>
+														<li>
+															<a class="dropdown-item" href="{{ path('app_categorie_index')}}">Gestion des catégories</a>
+														</li>
+														<li>
+															<a class="dropdown-item" href="{{ path('app_admin_user_index') }}">Gestion des utilisateurs</a>
+														</li>
+						
+														<li>
+															<a class="dropdown-item" href="{{path('app_admin_commande_index')}}">Gestion des commandes</a>
+														</li>
+						
+														<li>
+															<a class="dropdown-item" href="{{ path('app_admin_cgv_index') }}">Gestion des CGV</a>
+														</li> #}
+					</ul>
+				</div>
+			{% endif %}
+		{% endif %}
 
 
-			</ul>
+	</ul>
 
-			{# Gestion de la barre de recherche #}
-			<form class="d-flex" role="search" method="GET" action="{{ path('front')}}">
-				<input class="form-control me-2" name="search" type="search" placeholder="Recherche" aria-label="Search" value="{{ app.request.get('search')}}">
-				<button class="btn btn-outline-light" type="submit">Recherche</button>
-			</form>
+	{# Gestion de la barre de recherche #}
+	<form class="d-flex" role="search" method="GET" action="{{ path('front')}}">
+		<input class="form-control me-2" name="search" type="search" placeholder="Recherche" aria-label="Search" value="{{ app.request.get('search')}}">
+		<button class="btn btn-outline-light" type="submit">Recherche</button>
+	</form>
 
-			<ul class="navbar-nav mb-2 mb-lg-0">
+	<ul class="navbar-nav mb-2 mb-lg-0">
 
+		<li class="nav-item">
+
+			{% if app.user %}
 				<li class="nav-item">
-
-					{% if app.user %}
-						<a href="{{ path('app_logout')}}" class="nav-link text-danger">Déconnexion</a>
-					{% else %}
-						<a href="{{ path('app_login')}}" class="nav-link text-white">Connexion</a>
-					{% endif %}
+					<a class="nav-link text-white" href="{{ path('app_profil_show') }}">Mon compte</a>
 				</li>
-			</ul>
-
-		</div>
+				<a href="{{ path('app_logout')}}" class="nav-link text-danger">Déconnexion</a>
+			{% else %}
+				<a href="{{ path('app_login')}}" class="nav-link text-white">Connexion</a>
+			{% endif %}
+		</li>
+	</ul>
 	</div>
-</nav>
+  
+
+</div></div></nav>
+

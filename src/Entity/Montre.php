@@ -8,11 +8,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: MontreRepository::class)]
 #[Vich\Uploadable]
-
+#[ORM\HasLifecycleCallbacks]
 class Montre
 {
     #[ORM\Id]
@@ -36,20 +37,7 @@ class Montre
     private ?File $imageFile = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
-
-
-    
-
-
-    //On rajoute un constructeur
-    public function __construct() {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->images = new ArrayCollection();
-        $this->montreCommandes = new ArrayCollection();
-        
-    }
-    
+    private ?\DateTimeImmutable $createdAt = null; 
 
     #[ORM\ManyToOne(inversedBy: 'montres')]
     private ?Categorie $categorie = null;
@@ -59,6 +47,34 @@ class Montre
 
     #[ORM\OneToMany(mappedBy: 'montre', targetEntity: MontreCommande::class, orphanRemoval: true)]
     private Collection $montreCommandes;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $slug = null;
+
+
+    #[ORM\PrePersist]
+    public function setSlugCreate()
+    {
+        $slugger = new AsciiSlugger('fr_FR');
+
+        $this->slug = $slugger->slug(strtolower($this->titre)  .'-' . time());
+    }
+    
+    #[ORM\PreUpdate]
+    public function setSlugUpdate()
+    {
+        $slugger = new AsciiSlugger('fr_FR');
+
+        $this->slug = $slugger->slug(strtolower($this->titre)  .'-' . time());
+    }
+
+     //On rajoute un constructeur
+    public function __construct() 
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->images = new ArrayCollection();
+        $this->montreCommandes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -224,5 +240,10 @@ class Montre
         }
 
         return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
     }
 }

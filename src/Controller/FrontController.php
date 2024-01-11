@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Categorie;
+use App\Repository\HomePageRepository;
 use App\Repository\MontreRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,13 +13,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class FrontController extends AbstractController
 {
     #[Route('/home', name: 'home')]
-    public function index(Request $request): Response
+    public function index(HomePageRepository $homePageRepository): Response
     {
         // Commande qui permet de vider le panier
         // $request->getSession()->remove('panier');
 
         return $this->render('front/index.html.twig', [
-            'controller_name' => 'FrontController',
+            'home_page' => $homePageRepository->findOneBy([], ['id' => 'DESC'], 1),
         ]);
     }
 

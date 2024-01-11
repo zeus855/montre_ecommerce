@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Félicitation commande crée
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5 text-center">
+    <div class="jumbotron">
+        <h1 class="text-danger">Échec du Paiement !</h1>
+        <p>Le paiement n'a pas été effectué avec succès. Veuillez réessayer plus tard.</p>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Détails de la Tentative de Paiement</h3>
+        </div>
+        <div class="panel-body">
+            <p><strong>Montant Tenté :</strong> {{ commande.total }} €</p>
+            <p><strong>Date de la Tentative :</strong> {{ 'now'|date('d/m/Y') }}</p>
+            <!-- Ajoutez d'autres détails de la tentative de paiement si nécessaire -->
+        </div>
+    </div>
+
+    <a href="{{path('front')}}" class="btn btn-primary">< Retour à l'Accueil</a>
+</div>
+{% endblock %}

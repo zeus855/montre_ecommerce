@@ -1,0 +1,54 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}User index
+{% endblock %}
+
+{% block body %}
+	<h1>Liste des utilisateurs</h1>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Email</th>
+				<th>Roles</th>
+				<th>Nom</th>
+				<th>Prenom</th>
+				<th>Création</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for user in users %}
+				<tr>
+					<td>{{ user.id }}</td>
+					<td>{{ user.email }}</td>
+					<td>
+						{% for role in user.roles %}
+							<span class="badge text-bg-primary">
+								{{ constant('App\\Constante\\UserRoleConstante::MAP_INVERSE')[role] }}
+
+							</span>
+
+
+						{% endfor %}
+
+					</td>
+					<td>{{ user.nom }}</td>
+					<td>{{ user.prenom }}</td>
+					<td>{{ user.createdAt ? user.createdAt|date('d/m/Y à H:i') : '' }}</td>
+					<td>
+						<a href="{{ path('app_admin_user_show', {'id': user.id}) }}">show</a>
+						<a href="{{ path('app_admin_user_edit', {'id': user.id}) }}">edit</a>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="8">no records found</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<a href="{{ path('app_admin_user_new') }}">Créer un nouvel utilisateur</a>
+{% endblock %}

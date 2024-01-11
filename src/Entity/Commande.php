@@ -19,7 +19,7 @@ class Commande
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
-    
+
 
     #[ORM\Column(length: 255)]
     private ?string $statut = CommandeConstante::EN_COURS;
@@ -30,6 +30,28 @@ class Commande
     #[ORM\ManyToOne(inversedBy: 'commandes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'commandes')]
+    private ?Adresse $livraison = null;
+
+    #[ORM\ManyToOne(inversedBy: 'commandes')]
+    private ?Adresse $facturation = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $total = null;
+
+    // Créer une fonction raccourci pour compter la quatité 
+    // des montres qu'on a par commande
+    public function getTotalMontre(): int
+    {
+        $montre = 0;
+
+        foreach($this->montreCommandes as $montreCommande) {
+            $montre += $montreCommande->getQuantite();
+        }
+
+        return $montre;
+    }
 
     public function __construct()
     {
@@ -45,14 +67,6 @@ class Commande
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
-    }
-    
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
     }
 
     public function getStatut(): ?string
@@ -105,6 +119,42 @@ class Commande
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getLivraison(): ?Adresse
+    {
+        return $this->livraison;
+    }
+
+    public function setLivraison(?Adresse $livraison): static
+    {
+        $this->livraison = $livraison;
+
+        return $this;
+    }
+
+    public function getFacturation(): ?Adresse
+    {
+        return $this->facturation;
+    }
+
+    public function setFacturation(?Adresse $facturation): static
+    {
+        $this->facturation = $facturation;
+
+        return $this;
+    }
+
+    public function getTotal(): ?int
+    {
+        return $this->total;
+    }
+
+    public function setTotal(?int $total): static
+    {
+        $this->total = $total;
 
         return $this;
     }

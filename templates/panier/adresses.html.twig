@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Listes des adresses
-{% endblock %}
+{% block title %}Listes des adresses{% endblock %}
 
 {% block body %}
 
@@ -20,13 +19,11 @@
 							{{ adresse.fullAdresse|raw }}
 						</p>
 
-
 						<div class="form-check">
 							<input class="form-check-input js-selected" data-type="livraison" data-id="{{ adresse.id }}" type="checkbox" value="" id="flexCheckDefault-{{adresse.id}}">
 							<label class="form-check-label" for="flexCheckDefault-{{adresse.id}}">
 								Choisir
 							</label>
-
 
 							<a href="{{ path('app_edit_adresse', {id: adresse.id, urlRedirect: path(app.request.get('_route')) })}}" class="btn">Modifier</a>
 

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des commandes
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+	<h2>Liste des commandes</h2>
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th>Commandes</th>
+					<th>Status</th>
+					<th>Montant</th>
+					<th>Date de la commande</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for commande in commandes %}
+					<tr>
+						<td>
+							{% for item in commande.montreCommandes %}
+								<a href="{{ path('app_montre_front', {slug: item.montre.slug})}}">{{ item.montre.titre }}</a>
+								<br>
+							{% endfor %}
+						</td>
+						<td>
+							{% if commande.statut %}
+								{{ ('front.profile.commande.list.state.' ~ commande.statut)|trans }}
+							{% endif %}
+						</td>
+
+						<td>
+							{{ commande.total}}
+							€ (
+							<span class="text-primary">{{commande.totalMontre}}
+								Montre(s)</span>
+							)
+
+						</td>
+
+						<td>
+						{{ commande.createdAt ? commande.createdAt|date(' d-m-Y ') : '' }}
+							
+						</td>
+
+					</tr>
+				{% else %}
+					<tr>
+						<td>Vous n'avez pas de commande</td>
+					</tr>
+
+
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}

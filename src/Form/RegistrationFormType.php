@@ -27,18 +27,16 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'You should agree to our terms.',
+                        'message' => 'Veuillez accepter nos conditions.',
                     ]),
                 ],
             ])
             ->add('nom', TextType::class, [
                 'required' => false,
             ])
-
             ->add('prenom', TextType::class, [
                 'required' => false,
             ])
-
             ->add('plainPassword', RepeatedType::class, [
                 'mapped' => false,
                 'type' => PasswordType::class,

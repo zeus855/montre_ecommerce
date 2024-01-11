@@ -1,0 +1,34 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}HomePage{% endblock %}
+
+{% block body %}
+    <h1>HomePage</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ home_page.id }}</td>
+            </tr>
+            <tr>
+                <th>Entete</th>
+                <td>{{ home_page.entete }}</td>
+            </tr>
+            <tr>
+                <th>Corps</th>
+                <td>{{ home_page.corps }}</td>
+            </tr>
+            <tr>
+                <th>PiedPage</th>
+                <td>{{ home_page.piedPage }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_home_page_index') }}">back to list</a>
+
+    <a href="{{ path('app_admin_home_page_edit', {'id': home_page.id}) }}">edit</a>
+
+    {{ include('admin/home_page/_delete_form.html.twig') }}
+{% endblock %}

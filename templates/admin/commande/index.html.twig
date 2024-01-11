@@ -1,0 +1,55 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Liste des commandes
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<h1>{{ block('title') }}</h1>
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Articles</th>
+					<th>Date de création</th>
+					<th>Statut</th>
+					<th>Total</th>
+					<th>actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for commande in commandes %}
+					<tr>
+						<td>{{ commande.id }}</td>
+						<td>
+							{% for item in commande.montreCommandes %}
+								<a href="{{ path('app_montre_front', {slug: item.montre.slug})}}">{{ item.montre.titre }}</a>
+								<br>
+							{% endfor %}
+						</td>
+						<td>{{ commande.createdAt ? commande.createdAt|date('d/m/Y H:i') : '' }}</td>
+						<td>
+							{% if commande.statut %}
+								{{ ('front.profile.commande.list.state.' ~ commande.statut)|trans }}
+							{% endif %}
+						</td>
+						<td>{{ commande.total }}
+							€ (
+							<span class="text-primary">{{commande.totalMontre}}
+								Montres</span>
+							)</td>
+						<td>
+							{{ include('admin/commande/_delete_form.html.twig') }}
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="5">no records found</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+	</div>
+{% endblock %}

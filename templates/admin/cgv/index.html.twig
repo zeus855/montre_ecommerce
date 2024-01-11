@@ -1,0 +1,36 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}CGV
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Description</th>
+					<th>actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for cgv in cgvs %}
+					<tr>
+						<td>{{ cgv.id }}</td>
+						<td>{{ cgv.description }}</td>
+						<td>
+							<a href="{{ path('app_admin_cgv_edit', {'id': cgv.id}) }}">edit</a>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="3">
+							Pas de CGV
+							<a href="{{ path('app_admin_cgv_new') }}">Créer un CGV</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}

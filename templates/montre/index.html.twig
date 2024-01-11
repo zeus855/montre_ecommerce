@@ -1,9 +1,9 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_admin.html.twig' %}
 
-{% block title %}Montre index{% endblock %}
+{% block title %}Liste des Montres{% endblock %}
 
 {% block body %}
-    <h1>Montre index</h1>
+    <h1>Liste des Montres</h1>
 
     <table class="table text-center mt-3">
         <thead class="table-secondary">
@@ -18,6 +18,7 @@
             </tr>
         </thead>
         <tbody>
+        <a class="btn btn-primary" href="{{ path('app_montre_new') }}">Ajouter une montre</a>
         {% for montre in montres %}
             <tr>
                 <td>{{ montre.id }}</td>
@@ -28,8 +29,10 @@
                 <td>{{ montre.createdAt ? montre.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td><img src="{{ asset('images/montres/' ~ montre.imageName) | imagine_filter('miniature') }}" alt=""</td>
                 <td style="width:280px">
-                    <a class="btn btn-primary text-white" href="{{ path('app_montre_show', {'id': montre.id}) }}">Fiche</a>
-                    <a class="btn btn-warning text-white" href="{{ path('app_montre_edit', {'id': montre.id}) }}">Modifier</a>
+                
+                    <a class="btn btn-primary text-white my-2" href="{{ path('app_montre_show', {'id': montre.id}) }}">Fiche</a>
+                    
+                    <a class="btn btn-warning text-white my-2" href="{{ path('app_montre_edit', {'id': montre.id}) }}">Modifier</a>
                     
                     {{ include('montre/_delete_form.html.twig') }}
                     
@@ -44,5 +47,5 @@
         </tbody>
     </table>
 
-    <a class="btn btn-primary" href="{{ path('app_montre_new') }}">Ajouter une montre</a>
+    
 {% endblock %}

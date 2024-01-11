@@ -3,58 +3,68 @@
 {#
     La fonction parent() permet de récupérer le contenu du block situé dans le fichier héritée (base.html.twig)
 #}
-{% block title %}{{ parent() }} | Page principale{% endblock %}
+{% block title %}
+	{{ parent() }}
+	| Page principale
+{% endblock %}
 
-{% block h1 %}Bienvenue chez GYGY STORE{% endblock %}
-
-
-{% block stylesheets %}
-    {# /* <style>
-        p{
-            color:blue!important;
-        }
-    </style> */ #}
+{% block h1 %}Bienvenue chez GYGY STORE
 {% endblock %}
 
 {% block body %}
 
+	<div class="container mt-5">
+		<div class="text-center">
+			{% if home_page.entete %}
+				<div>
+					{{ home_page.entete|raw }}
+				</div>
 
-    {# {{ dump(prenomTwig) }} #}
-
-    {# <h2 class="text-center">Bonjour {{ prenomTwig }}</h2> #}
-
-    <h2 class="text-center">Bonjour,
-        {% if app.user %}
-            {{ app.user.prenom }}
-        {% endif %}
-    </h2>
-    <a href="{{ path('front') }}">
-    <img 
-        src="{{ asset('images/img.png') }}" 
-        alt=""
-        title=""
-        class="imgHome"
-    >
-    </a>
-    
-
-    <h2 class="text-center">Bienvenue chez GYGY STORE site dedié à la vente en ligne de montres Femme et Homme</h2>
+			{% endif %}
+			{% if home_page.corps %}
+				<div class="my-8">
+				<a href="{{ path('front') }}">	<img height="auto" width="400" 
+                src="{{ vich_uploader_asset(home_page, 'imageFile') }}" alt="Image">
+                </a>
+				</div>
+			{% endif %}
+			{% if home_page.piedPage %}
+				<div>
+					{{ home_page.piedPage|raw }}
+				</div>
+                
+                {# <a class="btn" href="{{ path('app_cgv') }}">CGV</a>
+                <a class="btn" href="{{ path('app_contact') }}">Contact</a> #}
+			{% endif %}
+		</div>
+	</div>
 
 
-    {#
-        En twig, il existe une variable d'environnement qui s'appelle app
-        dans ce tableau, on y trouve 'user'
+	{# <h2 class="text-center">Bonjour,
+		        {% if app.user %}
+		            {{ app.user.prenom }}
+		        {% endif %}
+		    </h2>
+		    <a href="{{ path('front') }}">
+		    <img 
+		        src="{{ asset('images/img.png') }}" 
+		        alt=""
+		        title=""
+		        class="imgHome"
+		    >
+		    </a>
+		    
+		
+		    <h2 class="text-center">Bienvenue chez GYGY STORE site dedié à la vente en ligne de montres Femme et Homme</h2> #}
 
-        quand l'utilisateur n'est pas connectée : app.user est NULL
-        quand l'utilisateur est connecté : app.user est un objet issu de l'entity User
-    #}
 
-    
+	{#
+		        En twig, il existe une variable d'environnement qui s'appelle app
+		        dans ce tableau, on y trouve 'user'
+		
+		        quand l'utilisateur n'est pas connectée : app.user est NULL
+		        quand l'utilisateur est connecté : app.user est un objet issu de l'entity User
+		    #}
 
-{% endblock %}
-
-{% block javascripts %}
-
-    
 
 {% endblock %}

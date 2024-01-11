@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/montre', name: 'app_montre_')]
 class MontreFrontController extends AbstractController
 {
-    #[Route('/{id}/front', name: 'front')]
+    #[Route('/{slug}/front', name: 'front')]
     public function montre(Montre $montre): Response
     {
         return $this->render('montre_front/index.html.twig', [

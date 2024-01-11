@@ -35,13 +35,18 @@ class MontreController extends AbstractController
             $entityManager->persist($montre);
             $entityManager->flush();
 
+            $this->addFlash('success', 'La montre a bien été ajoutée');
+
             return $this->redirectToRoute('app_montre_index', [], Response::HTTP_SEE_OTHER);
         }
+        
 
         return $this->renderForm('montre/new.html.twig', [
             'montre' => $montre,
             'form' => $form,
+           
         ]);
+        
     }
 
     #[Route('/{id}', name: 'app_montre_show', methods: ['GET'])]
@@ -60,6 +65,7 @@ class MontreController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+            $this->addFlash('success', 'La montre a bien été modifiée');
 
             return $this->redirectToRoute('app_montre_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -77,6 +83,7 @@ class MontreController extends AbstractController
             $entityManager->remove($montre);
             $entityManager->flush();
         }
+        $this->addFlash('success', 'La montre a bien été supprimée');
 
         return $this->redirectToRoute('app_montre_index', [], Response::HTTP_SEE_OTHER);
     }

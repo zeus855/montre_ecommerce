@@ -1,0 +1,15 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Edit HomePage{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Edit HomePage</h1>
+
+    {{ include('admin/home_page/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_admin_home_page_index') }}">Retour</a>
+
+    {{ include('admin/home_page/_delete_form.html.twig') }}
+    </div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Page d'accueil index{% endblock %}
+
+{% block body %}
+    <h1>Page d'accueil index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Entete</th>
+                <th>Corps</th>
+                <th>PiedPage</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for home_page in home_pages %}
+            <tr>
+                <td>{{ home_page.id }}</td>
+                <td>{{ home_page.entete }}</td>
+                <td>
+                    {% if home_page.corps %}
+                        <img height="30" width="30"  src="{{ vich_uploader_asset(home_page, 'imageFile') }}" alt="Image">
+                    {% endif %}
+                </td>
+                <td>{{ home_page.piedPage }}</td>
+                <td>
+                    {# <a href="{{ path('app_admin_home_page_show', {'id': home_page.id}) }}">show</a> #}
+                    <a href="{{ path('app_admin_home_page_edit', {'id': home_page.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Pas de configuration
+                    <a href="{{ path('app_admin_home_page_new') }}">Ajouter une conf</a>
+                 </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    
+{% endblock %}

@@ -34,6 +34,11 @@ security:
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
+            
+            # Pour activer la limitation des tentatives de connexion
+            login_throttling:
+                max_attempts: 3
+                interval: '5 minutes'
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

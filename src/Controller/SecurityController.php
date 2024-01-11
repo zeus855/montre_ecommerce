@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\ProfilType;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
@@ -29,19 +31,32 @@ class SecurityController extends AbstractController
     }
 
     // Route pour modifier utilisateur
-    #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    #[Route('/edit-profile', name: 'app_user_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordEncoder): Response
     {
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $form = $this->createForm(ProfilType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            if ($form->get('plainPassword')->getData()) {
+                $user->setPassword(
+                    $passwordEncoder->hashPassword(
+                        $user,
+                        $form->get('plainPassword')->getData()
+                    )
+                );
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_profil_show', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('montre/edit.html.twig', [
+        return $this->renderForm('security/edit_profil.html.twig', [
             'user' => $user,
             'form' => $form,
         ]);

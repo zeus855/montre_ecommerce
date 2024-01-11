@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Constante\AdresseTypeConstante;
+use App\Constante\CommandeConstante;
 use App\Entity\Adresse;
+use App\Entity\Commande;
 use App\Entity\Montre;
+use App\Entity\MontreCommande;
 use App\Form\AdresseType;
 use App\Repository\MontreRepository;
 use App\Repository\MontreCommandeRepository;
@@ -22,11 +25,14 @@ class PanierController extends AbstractController
     #[Route('/panier', name: 'app_panier')]
     public function index(Request $request, MontreRepository $montreRepository): Response
     {
+        // Récuperation des identifiants des montres dans le panier depuis la session
         $montresId = $request->getSession()->get('panier');
 
+        // Si des montres sont presentes dans le panier, on les extrait du repository des montres
         if ($montresId) {
             $paniers = $montreRepository->findBy(['id' => array_keys($montresId)]);
         } else {
+            // Si le panier est vide, on initialise la variable $paniers avec un tableau vide
             $paniers = [];
         }
 
@@ -39,9 +45,61 @@ class PanierController extends AbstractController
     }
 
     #[Route('/paiement/success', name: 'app_paiement_success_panier')]
-    public function paiementSuccess(Request $request): Response
+    public function paiementSuccess(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // On récupère le panier depuis la session et les montres associées à l'aide de leurs id.
+        $panier = $request->getSession()->get('panier');
+        $montres = $entityManager->getRepository(Montre::class)->findBy(['id' => array_keys($panier)]);
 
+        // On crée une nouvelle commande, l'associe à l'utilisateur actuel et lui attribue le statut "TERMINER"
+        $commande = new Commande();
+        $commande->setStatut(CommandeConstante::TERMINER);
+        $commande->setUser($this->getUser());
+        // On persiste la commande en base de données
+        $entityManager->persist($commande);
+
+        $total = 0;
+
+        // On parcourt les montres du panier
+        foreach ($montres as $montre) {
+            $quantite = $panier[$montre->getId()];
+
+            // calcule le total
+            $total += ($quantite * $montre->getPrix());
+
+            // crée des entités MontreCommande associées à la commande.
+            $montreCommande = new MontreCommande();
+            $montreCommande->setCommande($commande);
+            $montreCommande->setMontre($montre);
+            $montreCommande->setQuantite($quantite);
+            $montreCommande->setUser($this->getUser());
+
+            $entityManager->persist($montreCommande);
+        }
+
+        $commande->setTotal($total);
+        
+        // On récupère les adresses de livraison et de facturation depuis la session, puis les associe à la commande si elles existent
+        $adresses = $request->getSession()->get('adresse');
+        $livraison = $adresses['livraison'] ?? null;
+
+        if ($livraison) {
+            $adresse = $entityManager->getRepository(Adresse::class)->find($livraison);
+
+            $commande->setLivraison($adresse);
+        }
+
+        $facturation = $adresses['facturation'] ?? null;
+
+        if ($facturation) {
+            $adresse = $entityManager->getRepository(Adresse::class)->find($facturation);
+
+            $commande->setFacturation($adresse);
+        }
+
+        $entityManager->flush();
+
+        // On supprime les informations du panier et des adresses de la session,
         $request->getSession()->remove('panier');
         $request->getSession()->remove('adresse');
 
@@ -145,14 +203,15 @@ class PanierController extends AbstractController
     }
 
 
-    // on a rajouter pour la validation panier
+    // Route qui permet de gerer la vadilation d'une adresse 
     #[Route('/panier/validation', name: 'app_panier_validation')]
     #[IsGranted('ROLE_USER')]
     public function validation(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // On cree une nouvelle instance de l'entité Adresse et un formulaire associé AdresseType.Le formulaire sera utilisé pour saisir des infos de l'adresse
         $adresse = new Adresse;
-
         $form = $this->createForm(AdresseType::class, $adresse);
+        
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -181,11 +240,13 @@ class PanierController extends AbstractController
     }
 
 
-    #[Route('/selection/adresse', name: 'app_selection_panier')]
+    #[Route('/selection/adresse', name: 'app_selection_panier', methods: ['GET'])]
     public function selectionAdresse(Request $request): Response
     {
-        $result = $request->query->get('result', []);
-
+        $result = [
+            'livraison' => $request->query->get('livraison'),
+            'facturation' => $request->query->get('facturation'),
+        ];
 
         $session = $request->getSession();
 
@@ -216,7 +277,6 @@ class PanierController extends AbstractController
                 }
             }
         }
-
         $session->set('adresse', $ads);
 
         return $this->json(['url' => $this->generateUrl('app_paiement_panier')], 200);
@@ -226,14 +286,19 @@ class PanierController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function paiement(Request $request, MontreRepository $montreRepository): Response
     {
+        // Récuperation de l'utilisateur  connecté
         $user = $this->getUser();
 
+        // Config de la clé secrète Stripe
         \Stripe\Stripe::setApiKey($this->getParameter('app.stripe.secret_key'));
 
+        // Recuperation des infos paniers en session
         $panier = $request->getSession()->get('panier');
 
+        // Recuperation des infos des montre dans le panier
         $montres = $montreRepository->findBy(['id' => array_keys($panier)]);
 
+        // Creation d'un tableau contenant les prix de chaque montre dans le panier
         $prices = [];
         foreach ($montres as $montre) {
             $prices[] = [
@@ -248,13 +313,14 @@ class PanierController extends AbstractController
             ];
         }
 
+        // Cree une session de paiement avec Stripe en utilisant les infos du panier et infos de paiement
         $checkoutSession = \Stripe\Checkout\Session::create([
             'payment_method_types' => ['card'],
             'line_items' => $prices,
             'mode' => 'payment',
             'customer_email' => $user->getEmail(),
-            'success_url' => $this->generateUrl('app_paiement_success_panier', [], UrlGeneratorInterface::ABSOLUTE_URL),
-            'cancel_url' => $this->generateUrl('app_paiement_failed_panier', [], UrlGeneratorInterface::ABSOLUTE_URL)
+            'success_url' => $this->generateUrl('app_recapitulatif_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            'cancel_url' => $this->generateUrl('app_recapitulatif_failed', [], UrlGeneratorInterface::ABSOLUTE_URL)
         ]);
 
         $response = new Response();
@@ -266,7 +332,7 @@ class PanierController extends AbstractController
     }
 
 
-    #[Route('/Ajout/{id}', name: 'app_ajout_panier')]
+    #[Route('/Ajout/{slug}', name: 'app_ajout_panier')]
     public function add(Montre $montre, Request $request): Response
     {
         $session = $request->getSession();
@@ -288,10 +354,10 @@ class PanierController extends AbstractController
                 $panier[$montre->getId()] =  1;
             }
         }
-
+        // on rempli la session avec le nouveau panier
         $session->set('panier', $panier);
+        // on affiche un message flash
         $this->addFlash('success', 'Le produit à bien été rajouté dans le panier');
-        // return $this->redirectToRoute('app_montre_show', ['id' => $montre->getId()]);
         return $this->redirectToRoute('app_panier');
     }
 
@@ -322,14 +388,19 @@ class PanierController extends AbstractController
     {
         $session = $request->getSession();
 
+        // On récupère le panier de la session.
         $panier = $session->get('panier');
+        // On obtient l'id de la montre à partir de l'objet Montre.
         $montreid = $montre->getId();
+        // On vérifie si la montre est déjà dans le panier. Si oui, on incrémente sa valeur de 1.
         if ($panier[$montreid] ?? false) {
             $panier[$montreid] = $valeur + 1;
         }
 
+        // On met à jour le panier dans la session
         $session->set('panier', $panier);
-
+        
+        // On ajoute un message flash
         $this->addFlash('success', 'Votre panier à été mis à jour');
 
         return $this->redirectToRoute('app_panier');
@@ -342,7 +413,9 @@ class PanierController extends AbstractController
     {
         $session = $request->getSession();
 
+        // On récupère le panier de la session.
         $panier = $session->get('panier');
+        // On obtient l'id de la montre à partir de l'objet Montre.
         $montreid = $montre->getId();
         if ($panier[$montreid] ?? false) {
             if ($valeur == 1) {
@@ -352,8 +425,10 @@ class PanierController extends AbstractController
             }
         }
 
+        // On met à jour le panier dans la session
         $session->set('panier', $panier);
 
+        // On ajoute un message flash
         $this->addFlash('success', 'Votre panier à été mis à jour');
 
         return $this->redirectToRoute('app_panier');

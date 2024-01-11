@@ -1,0 +1,26 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}CGV{% endblock %}
+
+{% block body %}
+    <h1>CGV</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ cgv.id }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ cgv.description }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_cgv_index') }}">back to list</a>
+
+    <a href="{{ path('app_admin_cgv_edit', {'id': cgv.id}) }}">edit</a>
+
+    {{ include('admin/cgv/_delete_form.html.twig') }}
+{% endblock %}
