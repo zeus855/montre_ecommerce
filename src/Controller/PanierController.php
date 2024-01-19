@@ -51,24 +51,28 @@ class PanierController extends AbstractController
         $panier = $request->getSession()->get('panier');
         $montres = $entityManager->getRepository(Montre::class)->findBy(['id' => array_keys($panier)]);
 
-        // On crée une nouvelle commande, l'associe à l'utilisateur actuel et lui attribue le statut "TERMINER"
+        // On crée une nouvelle instance
         $commande = new Commande();
+        // On attribue le statut "TERMINER" à cette commande.
         $commande->setStatut(CommandeConstante::TERMINER);
+        // On associe la commande à l'utilisateur actuel
         $commande->setUser($this->getUser());
         // On persiste la commande en base de données
         $entityManager->persist($commande);
 
+        // Initialisation de la variable
         $total = 0;
 
         // On parcourt les montres du panier
         foreach ($montres as $montre) {
+            // Pour chaque montre, on récupère la quantité depuis le panier 
             $quantite = $panier[$montre->getId()];
 
             // calcule le total
             $total += ($quantite * $montre->getPrix());
 
-            // crée des entités MontreCommande associées à la commande.
-            $montreCommande = new MontreCommande();
+            // On crée une nouvelle instance de la classe MontreCommande associée à la commande, avec les détails tels que la montre, la quantité, et l'utilisateur connecté.
+            $montreCommande = new MontreCommande();            
             $montreCommande->setCommande($commande);
             $montreCommande->setMontre($montre);
             $montreCommande->setQuantite($quantite);
@@ -77,6 +81,7 @@ class PanierController extends AbstractController
             $entityManager->persist($montreCommande);
         }
 
+        // On associe le total
         $commande->setTotal($total);
         
         // On récupère les adresses de livraison et de facturation depuis la session, puis les associe à la commande si elles existent
@@ -203,7 +208,7 @@ class PanierController extends AbstractController
     }
 
 
-    // Route qui permet de gerer la vadilation d'une adresse 
+    // Route qui permet de gerer la validation d'une adresse 
     #[Route('/panier/validation', name: 'app_panier_validation')]
     #[IsGranted('ROLE_USER')]
     public function validation(Request $request, EntityManagerInterface $entityManager): Response
@@ -335,29 +340,34 @@ class PanierController extends AbstractController
     #[Route('/Ajout/{slug}', name: 'app_ajout_panier')]
     public function add(Montre $montre, Request $request): Response
     {
+        // On recupere la session 
         $session = $request->getSession();
 
+        // On récupère le contenu du panier à partir de la session utilisateur
         $panier = $session->get('panier');
 
         // Si le panier est vide
         if (!$panier) {
+            // On cree un nouveau panier avec 1 comme quantite de montre afin de ne pas avoir de bugg
             $panier = [
                 $montre->getId() => 1
             ];
         } else {
-            // Cas ou panier est non vide
+            // Au cas ou panier est non vide
 
-            // Le cas ou j'ai déjà rajouter cette montre dans le panier
+            // On vérifie si la montre est déjà dans le panier
             if ($panier[$montre->getId()] ?? false) {
+                // Incrémente la quantité dans le panier
                 $panier[$montre->getId()] +=  1;
             } else {
+                // On ajoute cette montre au panier avec une quantité de 1
                 $panier[$montre->getId()] =  1;
             }
         }
         // on rempli la session avec le nouveau panier
         $session->set('panier', $panier);
         // on affiche un message flash
-        $this->addFlash('success', 'Le produit à bien été rajouté dans le panier');
+        $this->addFlash('success', 'La montre à bien été rajoutée dans le panier');
         return $this->redirectToRoute('app_panier');
     }
 

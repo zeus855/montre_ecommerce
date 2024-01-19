@@ -45,9 +45,11 @@
 							</div>
 						{% endfor %}
 					</div>
-
+					
+					{#  Définit une variable facturation en utilisant la constante FACTURATION définie dans la classe AdresseTypeConstante. Cela permet de déterminer le type d'adresse de facturation. #}
 					{% set facturation =  constant('App\\Constante\\AdresseTypeConstante::FACTURATION') %}
-
+					
+					{# Vérifie si l'utilisateur a des adresses de facturation en utilisant la méthode getAdresseByType de l'objet user. Si des adresses de facturation existent, le contenu à l'intérieur de ce bloc if sera affiché. #}
 					{% if user.getAdresseByType(facturation)|length %}
 						<small class="my-1">
 							Facturation :
