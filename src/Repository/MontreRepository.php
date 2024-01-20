@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Montre;
+use App\Model\Search;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -32,6 +33,35 @@ class MontreRepository extends ServiceEntityRepository
             // On utilise setParameter pour lier le paramètre :term à la valeur %{$term}% 
                 ->setParameter('term', "%" . $term . "%");
         }
+
+        return $qb->getQuery()->getResult();
+    }
+
+
+    public function searchByCriteria(Search $search): array
+    {
+
+        /*
+            EN SQL : 
+            SELECT * 
+            FROM montre m
+            INNER JOIN categorie c ON (m.categorie_id = c.id)
+            WHERE c.id = 2 AND m.titre LIKE '%term%'
+        */
+
+        $qb = $this->createQueryBuilder('m');
+        
+        $qb->innerJoin('m.categorie', 'c');
+
+        if ($search->getRecherche()) {
+            $qb->andWhere('m.titre LIKE :term')
+            ->setParameter('term', '%'. $search->getRecherche() .'%');
+        }
+        if ($search->getCategorie()) {
+            $qb->andWhere('c.id = :categorie')
+            ->setParameter('categorie', $search->getCategorie()->getId());
+        }
+
 
         return $qb->getQuery()->getResult();
     }

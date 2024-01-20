@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Categorie;
+use App\Form\SearchType;
+use App\Model\Search;
 use App\Repository\HomePageRepository;
 use App\Repository\MontreRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +37,26 @@ class FrontController extends AbstractController
         ]);
     }
 
+    #[Route('/advanced', name: 'search_advanced')]
+    public function advanced(Request $request, MontreRepository $montreRepository): Response
+    {
+        $search = new Search();
+        $form = $this->createForm(SearchType::class, $search);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+           
+            $montres = $montreRepository->searchByCriteria($search);
+        } else {
+            $montres = $montreRepository->findAll();
+        }
+
+        return $this->render('montre_front/advanced_search.html.twig', [
+            'montres' => $montres,
+            'form' => $form->createView()
+        ]);
+    }
+
 
     #[Route('/{id}/categorie', name: 'front_categorie')]
     public function categorie(MontreRepository $montreRepository, Categorie $categorie): Response
@@ -42,6 +64,7 @@ class FrontController extends AbstractController
         $montres = $montreRepository->findBy(['categorie' => $categorie]);
         return $this->render('montre_front/liste.html.twig', [
             'montres' => $montres,
+            'categorie' => $categorie
         ]);
     }
 }

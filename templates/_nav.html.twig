@@ -74,10 +74,15 @@
 	</ul>
 
 	{# Gestion de la barre de recherche #}
-	<form class="d-flex" role="search" method="GET" action="{{ path('front')}}">
-		<input class="form-control me-2" name="search" type="search" placeholder="Recherche" aria-label="Search" value="{{ app.request.get('search')}}">
-		<button class="btn btn-outline-light" type="submit">Recherche</button>
-	</form>
+
+	{% if app.request.get('_route') != 'search_advanced' %}
+		<form class="d-flex" role="search" method="GET" action="{{ path('front')}}">
+			<input class="form-control me-2" name="search" type="search" placeholder="Recherche" aria-label="Search" value="{{ app.request.get('search') }}">
+			
+			<button class="btn btn-outline-light" type="submit">Recherche</button>
+			<a href="{{ path('search_advanced')}}" class="btn btn-outline-light mx-2" >Advenced </a>
+		</form>
+	{% endif %}
 
 	<ul class="navbar-nav mb-2 mb-lg-0">
 

@@ -1,21 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Montres
+{% block title %}Recherche par critère
 {% endblock %}
 
-{% block description %}
-	{# Découvrez l'élégance intemporelle de notre collection de montres pour {{categorie.nom|lower }}s sur GYGY STORE. Explorez une gamme diversifiée de montres conçues pour compléter le style et la personnalité de l'{{categorie.nom|lower }} moderne. Des montres classiques aux modèles sportifs, notre sélection propose des pièces de qualité supérieure de marques réputées. #}
-
-{% endblock %}
+				
 {% block body %}
 
 	<div class="container mt-5">
 		<div>
 			<h2 class="text-center">Liste des Montres
-				{% if app.request.get('search') %}
-					<span class="badge rounded-pill text-bg-primary">{{ app.request.get('search') }}</span>
-				{% endif %}
 			</h2>
+		</div>
+
+		<div>
+			{{ form_start(form) }}
+			{{ form_row(form.recherche) }}
+			{{ form_row(form.categorie) }}
+
+			<button type="submit" class="btn btn-primary">Rechercher</button>
+			{{ form_end(form) }}
 		</div>
 
 		<div class="row mt-3">
@@ -44,7 +47,9 @@
 						<a class="btn btn-primary my-2" href="{{ path('app_ajout_panier', {slug: montre.slug}) }}">Ajouter au panier</a>
 					</div>
 				</div>
-				
+			
+			{% else %}
+				<div class="alert alert-success text-center my-5"> Pas de résultat !</div>
 			{% endfor %}
 		</div>
 	</div>
