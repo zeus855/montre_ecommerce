@@ -4,8 +4,11 @@
 {% endblock %}
 
 {% block description %}
-	{# Découvrez l'élégance intemporelle de notre collection de montres pour {{categorie.nom|lower }}s sur GYGY STORE. Explorez une gamme diversifiée de montres conçues pour compléter le style et la personnalité de l'{{categorie.nom|lower }} moderne. Des montres classiques aux modèles sportifs, notre sélection propose des pièces de qualité supérieure de marques réputées. #}
-
+	{% if categorie|default %}
+	Découvrez l'élégance intemporelle de notre collection de montres pour {{categorie.nom|lower }}s sur GYGY STORE. Explorez une gamme diversifiée de montres conçues pour compléter le style et la personnalité de l'{{categorie.nom|lower }} moderne. Des montres classiques aux modèles sportifs, notre sélection propose des pièces de qualité supérieure de marques réputées.
+	{% else %}
+		Bienvenue dans l'univers de l'élégance intemporelle. Découvrez notre collection exquise de montres de luxe, où l'artisanat exceptionnel rencontre le raffinement ultime. Chez GYGY STORE, nous sommes fiers de vous offrir une sélection soigneusement curated de garde-temps d'exception, alliant technologie de pointe et design sophistiqué.
+	{% endif %}
 {% endblock %}
 {% block body %}
 
