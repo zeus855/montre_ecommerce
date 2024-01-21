@@ -50,6 +50,8 @@ class CreateAdminCommand extends Command
                 $password
             )
         );
+        $user->setNom('Gbane');
+        $user->setPrenom('Yacoub');
 
         $this->em->persist($user);
 
