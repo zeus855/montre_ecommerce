@@ -1,0 +1,84 @@
+{% extends "base.html.twig" %}
+
+{% block title %}500 - Erreur serveur{% endblock %}
+
+{% block _footer '' %}
+
+{% block meta_robots %}
+    <meta name="robots" content="noindex" />
+{% endblock %}
+
+{% block body %}
+    <style>
+        .error {
+            color: #5a5c69;
+            font-size: 7rem;
+            position: relative;
+            line-height: 1;
+            width: 12.5rem;
+        }
+
+        .error:after {
+            content: attr(data-text);
+            position: absolute;
+            left: 2px;
+            text-shadow: -1px 0 #e74a3b;
+            top: 0;
+            color: #5a5c69;
+            background: #f8f9fc;
+            overflow: hidden;
+            clip: rect(0, 900px, 0, 0);
+            animation: noise-anim 2s infinite linear alternate-reverse;
+        }
+
+        .error:before {
+            content: attr(data-text);
+            position: absolute;
+            left: -2px;
+            text-shadow: 1px 0 #4e73df;
+            top: 0;
+            color: #5a5c69;
+            background: #f8f9fc;
+            overflow: hidden;
+            clip: rect(0, 900px, 0, 0);
+            animation: noise-anim-2 3s infinite linear alternate-reverse;
+        }
+        .text-gray-800 {
+            color: #5a5c69 !important;
+        }
+        .text-gray-500 {
+            color: #7b7b83 !important;
+        }
+
+
+    </style>
+    <div class="container-fluid">
+
+        <!-- 404 Error Text -->
+        <div class="text-center mb-5">
+            <div class="error mx-auto" data-text="500">500</div>
+            <p class="lead text-gray-800 mb-5">Une erreur du serveur c'est produite 😭 </p>
+            <div>
+
+                    Oh non ! Notre serveur a décidé de prendre une pause café et a lancé une erreur 500.
+                    <br>
+                    Il semblerait que même les machines aient besoin d'une petite pause de temps en temps.
+                    <br>
+                    Nous sommes en train de le secouer un peu pour le réveiller, mais si cela ne fonctionne pas, nous pourrions devoir envoyer un message à son patron.
+                    <br>
+                    Nous sommes désolés pour ce petit contretemps, nous avons donc préparé une blague pour vous faire sourire pendant que nous travaillons sur la résolution du problème :
+                    <br>Pourquoi les programmeurs ont-ils du mal à dormir la nuit ? <br>
+                    Parce qu'ils ont besoin de fermer les yeux pour se reposer, mais dès qu'ils les ferment, leur cerveau commence à coder des rêves !
+                    <br>Nous espérons que cette petite blague vous aidera à passer le temps en attendant le retour de notre serveur.
+                    <br>
+                    <br>Merci de votre patience et à bientôt !
+            </div>
+            <br>
+            <br>
+            <br>
+            <div class="text-center  mb-5">
+                <a href="{{ path('front') }}">&larr; Voulez-vous revenir à la page d'accueil peut être 🤔 ? </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
